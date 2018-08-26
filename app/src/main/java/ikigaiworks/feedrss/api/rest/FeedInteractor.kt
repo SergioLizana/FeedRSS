@@ -21,7 +21,7 @@ class FeedInteractor : GenericRequestHandler<FeedResponse>() {
     }
 
     companion object {
-        fun createInstance(userId: String, pinCode: String): FeedInteractor {
+        fun createInstance(): FeedInteractor {
             return FeedInteractor()
         }
     }
