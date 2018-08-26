@@ -20,7 +20,10 @@ class MainFragment : Fragment(), LifecycleOwner{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel?.searchFeedRss()?.observe(this, ApiObserver<DataWrapper<FeedResponse>>(object : ApiObserver.ChangeListener<DataWrapper<FeedResponse>>{
+    }
+
+    fun observeViewModel(){
+        viewModel?.searchFeedRss()?.observe(this, object: ApiObserver<DataWrapper<FeedResponse>>(object : ApiObserver.ChangeListener<DataWrapper<FeedResponse>>{
             override fun onSuccess(dataWrapper: DataWrapper<FeedResponse>?) {
 
             }
@@ -30,7 +33,6 @@ class MainFragment : Fragment(), LifecycleOwner{
             }
 
         }))
-
     }
 
 
