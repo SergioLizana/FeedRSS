@@ -1,15 +1,18 @@
 package ikigaiworks.feedrss.view
 
 import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import ikigaiworks.feedrss.R
 import ikigaiworks.feedrss.api.observer.ApiObserver
+import ikigaiworks.feedrss.database.model.FeedData
 import ikigaiworks.feedrss.model.FeedResponse
 import ikigaiworks.feedrss.model.ItemsItem
 import ikigaiworks.feedrss.utils.OnRecyclerObjectClickListener
@@ -25,7 +28,7 @@ class MainFragment : Fragment(), LifecycleOwner , OnRecyclerObjectClickListener<
     }
 
     private lateinit var viewModel: FeedViewModel
-    private lateinit var adapter: FeedAdapter
+    private var adapter: FeedAdapter? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -40,15 +43,32 @@ class MainFragment : Fragment(), LifecycleOwner , OnRecyclerObjectClickListener<
     }
 
     private fun observeViewModel() {
-        viewModel?.searchFeedRss()?.observe(this, ApiObserver(object : ApiObserver.ChangeListener<FeedResponse> {
-            override fun onSuccess(dataWrapper: FeedResponse?) {
-               loadData(dataWrapper)
-            }
+        val hasInternet = false
+        if(!hasInternet) {
+            viewModel?.searchFeedRssDatabase()?.observe(this, Observer<List<FeedData>> {
+                Log.d("datos", "wiiii ")
+            })
+        }else{
+            viewModel?.searchFeedRss()?.observe(this, ApiObserver(object : ApiObserver.ChangeListener<FeedResponse> {
+                override fun onSuccess(dataWrapper: FeedResponse?) {
+                    loadData(dataWrapper)
+                    saveInDataBase(dataWrapper)
+                }
 
-            override fun onException(exception: Exception?) {
-                loadError(exception?.message)
-            }
-        }))
+                override fun onException(exception: Exception?) {
+                    loadError(exception?.message)
+                }
+            }))
+        }
+    }
+
+    private fun saveInDataBase(dataWrapper: FeedResponse?) {
+        viewModel.destroyData()
+        for (item in dataWrapper?.items!!){
+            viewModel.saveInDataBase(item.title,item.thumbnail,item.description,item.link,item.author,item.pubDate)
+        }
+
+
     }
 
     private fun loadData(response: FeedResponse?){
