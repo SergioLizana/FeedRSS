@@ -2,9 +2,8 @@ package ikigaiworks.recipepuppyapi.api.rest
 
 import ikigaiworks.feedrss.api.rest.client.FeedRSSApiClient
 import ikigaiworks.feedrss.utils.Constants.Companion.FEED_URL_API
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.Retrofit
-
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 class FeedService {

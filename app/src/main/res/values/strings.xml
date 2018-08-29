@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FeedRSS</string>
+    <string name="search_hint">TITLE FILTER</string>
 </resources>
